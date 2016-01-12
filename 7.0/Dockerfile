@@ -16,7 +16,7 @@ RUN apt-get update \
 # Prepare run directory
 RUN mkdir /run/php
 
-WORKDIR /var/www/html
+WORKDIR /var/www
 
 COPY php-fpm.conf /etc/php/7.0/fpm/php-fpm.conf
 

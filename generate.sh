@@ -47,7 +47,7 @@ for version in "${versions[@]}"; do
 	&& apt-get install -y ${package} ${extensions} \\
 	&& apt-get clean \\
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*\n\n" >> ${file}
-	printf "# Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www/html\n\n" >> ${file}
+	printf "# Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> ${file}
 	printf "COPY php-fpm.conf ${config}\n\nCMD [\"${binary}\"]\n" >> ${file}
 
 	cp php-fpm.conf ${version}/
