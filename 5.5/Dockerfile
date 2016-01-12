@@ -1,0 +1,22 @@
+FROM ubuntu:14.04
+MAINTAINER Martin Prebio <mp@25th-floor.com>
+EXPOSE 9000
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update \
+	&& apt-get dist-upgrade -y \
+	&& apt-get install -y software-properties-common language-pack-en-base \
+	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php5 \
+	&& apt-get update \
+	&& apt-get install -y php5-fpm \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Prepare run directory
+RUN mkdir /run/php
+
+WORKDIR /var/www/html
+
+COPY php-fpm.conf /etc/php5/fpm/php-fpm.conf
+
+CMD ["php5-fpm"]
