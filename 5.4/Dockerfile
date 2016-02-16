@@ -9,7 +9,7 @@ RUN apt-get update \
 	&& apt-get install -y software-properties-common language-pack-en-base \
 	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php5-oldstable \
 	&& apt-get update \
-	&& apt-get install -y php5-fpm php5-sqlite php5-pgsql php5-mysqlnd php5-mcrypt php5-intl php5-gd \
+	&& apt-get install -y php5-fpm php5-sqlite php5-pgsql php5-mysqlnd php5-mcrypt php5-intl php5-gd php5-curl \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
