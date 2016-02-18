@@ -59,6 +59,7 @@ done
 
 # Building php-nginx images
 for version in "${versions[@]}"; do
+	majorVersion=`echo $version | sed 's/^\([[:digit:]]*\).*$/\1/'`
 
 	directory="${version}/nginx"
 	file="${directory}/Dockerfile"
