@@ -6,12 +6,17 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update \
 	&& apt-get dist-upgrade -y \
-	&& apt-get install -y software-properties-common language-pack-en-base \
+	&& apt-get install -y software-properties-common language-pack-en-base git \
 	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php-7.0 \
 	&& apt-get update \
 	&& apt-get install -y php7.0-fpm php7.0-sqlite php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-intl php7.0-gd php7.0-curl \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Install composer
+RUN php -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
+	&& php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
+	&& rm composer-setup.php
 
 # Prepare run directory
 RUN mkdir /run/php
