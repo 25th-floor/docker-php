@@ -11,7 +11,7 @@ ppas=(
 	[54]='php5-oldstable'
 	[55]='php5'
 	[56]='php5-5.6'
-	[70]='php-7.0'
+	[70]='php'
 )
 
 # Building php-fpm images
@@ -28,7 +28,7 @@ for version in "${versions[@]}"; do
 	package="php${majorVersion}-fpm"
 	binary="php${majorVersion}-fpm"
 	config="/etc/php${majorVersion}/fpm/php-fpm.conf"
-	extensions="php5-sqlite php5-pgsql php5-mysqlnd php5-mcrypt php5-intl php5-gd php5-curl"
+	extensions="php5-sqlite php5-pgsql php5-mysqlnd php5-mcrypt php5-intl php5-gd php5-curl php5-xsl"
 	cliBinary="php${majorVersion}"
 
     if [[ ${version} == "5.4" ]]; then
@@ -39,7 +39,7 @@ for version in "${versions[@]}"; do
 		package="php7.0-fpm"
 		binary="php-fpm7.0"
 		config='/etc/php/7.0/fpm/php-fpm.conf'
-		extensions="php7.0-sqlite php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-intl php7.0-gd php7.0-curl"
+		extensions="php7.0-sqlite php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-intl php7.0-gd php7.0-curl php7.0-xml"
 		cliBinary="php"
 	fi
 
