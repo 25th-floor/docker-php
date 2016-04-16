@@ -96,7 +96,8 @@ for version in "${versions[@]}"; do
 		MAINTAINER Martin Prebio <mp@25th-floor.com>
 		EXPOSE 80
 
-		RUN apt-get update \\
+		RUN add-apt-repository ppa:nginx/development \\
+			&& apt-get update \\
 			&& apt-get install -y supervisor nginx \\
 			&& apt-get clean \\
 			&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
