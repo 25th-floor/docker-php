@@ -3,13 +3,14 @@ FROM twentyfifth/php-fpm:5.4
 MAINTAINER Martin Prebio <mp@25th-floor.com>
 EXPOSE 80
 
-RUN apt-get update \
-	&& apt-get install -y supervisor nginx \
-	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
+RUN add-apt-repository ppa:nginx/development \
+&& apt-get update \
+&& apt-get install -y supervisor nginx \
+&& apt-get clean \
+&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+        
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
-	&& ln -sf /dev/stderr /var/log/nginx/error.log
+&& ln -sf /dev/stderr /var/log/nginx/error.log
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY nginx-site.conf /etc/nginx/sites-enabled/default
