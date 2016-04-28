@@ -39,7 +39,7 @@ for version in "${versions[@]}"; do
 		package="php7.0-fpm"
 		binary="php-fpm7.0"
 		config='/etc/php/7.0/fpm/php-fpm.conf'
-		extensions="php7.0-sqlite php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-intl php7.0-gd php7.0-curl php7.0-xml"
+		extensions="php7.0-sqlite php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-intl php7.0-gd php7.0-curl php7.0-xml php7.0-mbstring"
 		cliBinary="php"
 	fi
 
