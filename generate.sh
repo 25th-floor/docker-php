@@ -58,10 +58,8 @@ for version in "${versions[@]}"; do
 			&& apt-get update \\
 			&& apt-get install -y ${package} ${extensions} \\
 			&& apt-get clean \\
-			&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-		# Install composer
-		RUN ${cliBinary} -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \\
+			&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \\
+			&& ${cliBinary} -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \\
 			&& ${cliBinary} composer-setup.php --install-dir=/usr/local/bin --filename=composer \\
 			&& rm composer-setup.php
 
@@ -69,6 +67,9 @@ for version in "${versions[@]}"; do
 		COPY php-fpm.conf ${config}
 		CMD ["${binary}"]
 	DOCKERFILE
+
+        # do some code-styling for Dockerfile readability
+        sed -i '' -e "s|^&&|$(printf '\t')\&\&|g" ${file}
 
 	cp php-fpm.conf ${directory}
 
@@ -100,9 +101,8 @@ for version in "${versions[@]}"; do
 			&& apt-get update \\
 			&& apt-get install -y supervisor nginx \\
 			&& apt-get clean \\
-			&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-        
-		RUN ln -sf /dev/stdout /var/log/nginx/access.log \\
+			&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \\
+			&& ln -sf /dev/stdout /var/log/nginx/access.log \\
 			&& ln -sf /dev/stderr /var/log/nginx/error.log
 
 		COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -110,6 +110,9 @@ for version in "${versions[@]}"; do
 
 		CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 	DOCKERFILE
+
+        # do some code-styling for Dockerfile readability
+        sed -i '' -e "s|^&&|$(printf '\t')\&\&|g" ${file}
 
 	cat <<- SUPERVISOR > ${supervisor}
 		[supervisord]
