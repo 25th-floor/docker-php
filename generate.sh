@@ -119,6 +119,7 @@ for version in "${versions[@]}"; do
 		nodaemon=true
 		loglevel=debug
 		logfile=/proc/self/fd/2
+		logfile_maxbytes=0
 		
 		[program:php-fpm]
 		command=${binary}
@@ -126,7 +127,9 @@ for version in "${versions[@]}"; do
 		autorestart=true
 		redirect_stderr=true
 		stdout_logfile=/proc/self/fd/2
+		stdout_logfile_maxbytes=0
 		stderr_logfile=/proc/self/fd/2
+		stderr_logfile_maxbytes=0
 
 		[program:nginx]
 		command=nginx -g "daemon off;"
@@ -134,7 +137,9 @@ for version in "${versions[@]}"; do
 		autorestart=true
 		redirect_stderr=true
 		stdout_logfile=/proc/self/fd/2
+		stdout_logfile_maxbytes=0
 		stderr_logfile=/proc/self/fd/2
+		stderr_logfile_maxbytes=0
 	SUPERVISOR
 
 	cp nginx-site.conf ${directory}
