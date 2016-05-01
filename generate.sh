@@ -115,12 +115,23 @@ for version in "${versions[@]}"; do
 		[supervisord]
 		nodaemon=true
 		loglevel=debug
+		logfile=/proc/self/fd/2
 		
 		[program:php-fpm]
 		command=${binary}
+		autostart=true
+		autorestart=true
+		redirect_stderr=true
+		stdout_logfile=/proc/self/fd/2
+		stderr_logfile=/proc/self/fd/2
 
 		[program:nginx]
 		command=nginx -g "daemon off;"
+		autostart=true
+		autorestart=true
+		redirect_stderr=true
+		stdout_logfile=/proc/self/fd/2
+		stderr_logfile=/proc/self/fd/2
 	SUPERVISOR
 
 	cp nginx-site.conf ${directory}
