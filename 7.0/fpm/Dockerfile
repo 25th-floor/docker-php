@@ -2,6 +2,7 @@
 FROM ubuntu:14.04
 MAINTAINER Martin Prebio <mp@25th-floor.com>
 EXPOSE 9000
+
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update \
@@ -9,20 +10,13 @@ RUN apt-get update \
 	&& apt-get install -y software-properties-common language-pack-en-base git \
 	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
 	&& apt-get update \
-	&& apt-get install -y php7.0-fpm php7.0-sqlite php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-intl php7.0-gd php7.0-curl php7.0-xml \
+	&& apt-get install -y php7.0-fpm php7.0-sqlite php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-intl php7.0-gd php7.0-curl php7.0-xml php7.0-mbstring \
 	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# Install composer
-RUN php -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
+	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+	&& php -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
 	&& php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
 	&& rm composer-setup.php
 
-# Prepare run directory
-RUN mkdir /run/php
-
-WORKDIR /var/www
-
+# Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> 7.0/fpm/Dockerfile
 COPY php-fpm.conf /etc/php/7.0/fpm/php-fpm.conf
-
 CMD ["php-fpm7.0"]

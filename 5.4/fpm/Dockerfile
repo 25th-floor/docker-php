@@ -2,6 +2,7 @@
 FROM ubuntu:14.04
 MAINTAINER Martin Prebio <mp@25th-floor.com>
 EXPOSE 9000
+
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update \
@@ -11,18 +12,11 @@ RUN apt-get update \
 	&& apt-get update \
 	&& apt-get install -y php5-fpm php5-cli php5-sqlite php5-pgsql php5-mysqlnd php5-mcrypt php5-intl php5-gd php5-curl php5-xsl \
 	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# Install composer
-RUN php5 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
+	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+	&& php5 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
 	&& php5 composer-setup.php --install-dir=/usr/local/bin --filename=composer \
 	&& rm composer-setup.php
 
-# Prepare run directory
-RUN mkdir /run/php
-
-WORKDIR /var/www
-
+# Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> 5.4/fpm/Dockerfile
 COPY php-fpm.conf /etc/php5/fpm/php-fpm.conf
-
 CMD ["php5-fpm"]
