@@ -14,6 +14,9 @@ ppas=(
 	[70]='php'
 )
 
+# Set default timezone
+TZ='Europe/Vienna'
+
 # Building php-fpm images
 for version in "${versions[@]}"; do
 	versionShort=`echo $version | tr -d '.'`
@@ -50,6 +53,11 @@ for version in "${versions[@]}"; do
 		EXPOSE 9000
 
 		ENV DEBIAN_FRONTEND noninteractive
+                ENV TZ=${TZ}
+
+                RUN ln -snf /usr/share/zoneinfo/\$TZ /etc/localtime \\
+			&& echo \$TZ > /etc/timezone \\
+			&& dpkg-reconfigure -f noninteractive tzdata
 
 		RUN apt-get update \\
 			&& apt-get dist-upgrade -y \\
@@ -96,6 +104,12 @@ for version in "${versions[@]}"; do
 		FROM twentyfifth/php-fpm:${version}
 		MAINTAINER Martin Prebio <mp@25th-floor.com>
 		EXPOSE 80
+
+		ENV TZ=${TZ}
+
+		RUN ln -snf /usr/share/zoneinfo/\$TZ /etc/localtime \\
+			&& echo \$TZ > /etc/timezone \\
+			&& dpkg-reconfigure -f noninteractive tzdata
 
 		RUN add-apt-repository ppa:nginx/development \\
 			&& apt-get update \\

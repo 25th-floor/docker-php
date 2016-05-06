@@ -4,6 +4,11 @@ MAINTAINER Martin Prebio <mp@25th-floor.com>
 EXPOSE 9000
 
 ENV DEBIAN_FRONTEND noninteractive
+                ENV TZ=Europe/Vienna
+
+                RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+	&& echo $TZ > /etc/timezone \
+	&& dpkg-reconfigure -f noninteractive tzdata
 
 RUN apt-get update \
 	&& apt-get dist-upgrade -y \
