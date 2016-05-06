@@ -15,10 +15,14 @@ RUN apt-get update \
 	&& apt-get install -y software-properties-common language-pack-en-base git \
 	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
 	&& apt-get update \
+	&& echo "Package: *\nPin: release o=LP-PPA-ondrej-php5\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \
 	&& apt-get install -y php7.0-fpm php7.0-sqlite php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-intl php7.0-gd php7.0-curl php7.0-xml php7.0-mbstring \
 	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-	&& php -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
+	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN phpenmod sqlite pgsql mysql mcrypt intl gd curl xml mbstring
+
+RUN php -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
 	&& php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
 	&& rm composer-setup.php
 

@@ -13,8 +13,9 @@ RUN add-apt-repository ppa:nginx/development \
 	&& apt-get update \
 	&& apt-get install -y supervisor nginx \
 	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-	&& ln -sf /dev/stdout /var/log/nginx/access.log \
+	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf

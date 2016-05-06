@@ -8,7 +8,6 @@ fi
 versions=( "${versions[@]%/}" )
 
 ppas=(
-	[54]='php5-oldstable'
 	[55]='php5'
 	[56]='php5-5.6'
 	[70]='php'
@@ -28,22 +27,23 @@ for version in "${versions[@]}"; do
 	echo "Generating ${file}"
 
 	ppa=${ppas[$versionShort]}
+	ppaPinName="LP-PPA-ondrej-php5"
 	package="php${majorVersion}-fpm"
 	binary="php${majorVersion}-fpm"
 	config="/etc/php${majorVersion}/fpm/php-fpm.conf"
 	extensions="php5-sqlite php5-pgsql php5-mysqlnd php5-mcrypt php5-intl php5-gd php5-curl php5-xsl"
+	extensionsShort=`echo $extensions | sed -e 's|php[0-9\.]*-||g'`
 	cliBinary="php${majorVersion}"
-
-	if [[ ${version} == "5.4" ]]; then
-		package+=" php5-cli"
-	fi
+	phpenmod="php5enmod"
 
 	if [[ ${majorVersion} == "7" ]]; then
 		package="php7.0-fpm"
 		binary="php-fpm7.0"
 		config='/etc/php/7.0/fpm/php-fpm.conf'
 		extensions="php7.0-sqlite php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-intl php7.0-gd php7.0-curl php7.0-xml php7.0-mbstring"
+		extensionsShort=`echo $extensions | sed -e 's|php[0-9\.]*-||g'`
 		cliBinary="php"
+		phpenmod="phpenmod"
 	fi
 
 	cat <<- DOCKERFILE > ${file}
@@ -64,10 +64,14 @@ for version in "${versions[@]}"; do
 			&& apt-get install -y software-properties-common language-pack-en-base git \\
 			&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/${ppa} \\
 			&& apt-get update \\
+			&& echo "Package: *\nPin: release o=${ppaPinName}\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \\
 			&& apt-get install -y ${package} ${extensions} \\
 			&& apt-get clean \\
-			&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \\
-			&& ${cliBinary} -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \\
+			&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+		RUN ${phpenmod} ${extensionsShort}
+
+		RUN ${cliBinary} -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \\
 			&& ${cliBinary} composer-setup.php --install-dir=/usr/local/bin --filename=composer \\
 			&& rm composer-setup.php
 
@@ -115,8 +119,9 @@ for version in "${versions[@]}"; do
 			&& apt-get update \\
 			&& apt-get install -y supervisor nginx \\
 			&& apt-get clean \\
-			&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \\
-			&& ln -sf /dev/stdout /var/log/nginx/access.log \\
+			&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+		RUN ln -sf /dev/stdout /var/log/nginx/access.log \\
 			&& ln -sf /dev/stderr /var/log/nginx/error.log
 
 		COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
