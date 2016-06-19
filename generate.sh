@@ -31,19 +31,22 @@ for version in "${versions[@]}"; do
 	package="php${majorVersion}-fpm"
 	binary="php${majorVersion}-fpm"
 	config="/etc/php${majorVersion}/fpm/php-fpm.conf"
-	extensions="php5-sqlite php5-pgsql php5-mysqlnd php5-mcrypt php5-intl php5-gd php5-curl php5-xsl"
+	extensions="php5-sqlite php5-pgsql php5-mysqlnd php5-mcrypt php5-intl php5-gd php5-curl php5-xsl php5-xdebug"
 	extensionsShort=`echo $extensions | sed -e 's|php[0-9\.]*-||g'`
+	extensionsDisable="xdebug"
 	cliBinary="php${majorVersion}"
 	phpenmod="php5enmod"
+	phpdismod="php5dismod"
 
 	if [[ ${majorVersion} == "7" ]]; then
 		package="php7.0-fpm"
 		binary="php-fpm7.0"
 		config='/etc/php/7.0/fpm/php-fpm.conf'
-		extensions="php7.0-sqlite php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-intl php7.0-gd php7.0-curl php7.0-xml php7.0-mbstring"
+		extensions="php7.0-sqlite php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-intl php7.0-gd php7.0-curl php7.0-xml php7.0-mbstring php7.0-xdebug"
 		extensionsShort=`echo $extensions | sed -e 's|php[0-9\.]*-||g'`
 		cliBinary="php"
 		phpenmod="phpenmod"
+		phpdismod="phpdismod"
 	fi
 
 	cat <<- DOCKERFILE > ${file}
@@ -70,6 +73,9 @@ for version in "${versions[@]}"; do
 			&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 		RUN ${phpenmod} ${extensionsShort}
+
+		# supply but disable xdebug; can be enabled by custom volume-mount ini file
+		RUN ${phpdismod} ${extensionsDisable}
 
 		RUN ${cliBinary} -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \\
 			&& ${cliBinary} composer-setup.php --install-dir=/usr/local/bin --filename=composer \\

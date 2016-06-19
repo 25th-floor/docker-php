@@ -16,11 +16,15 @@ RUN apt-get update \
 	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
 	&& apt-get update \
 	&& echo "Package: *\nPin: release o=LP-PPA-ondrej-php5\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \
-	&& apt-get install -y php7.0-fpm php7.0-sqlite php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-intl php7.0-gd php7.0-curl php7.0-xml php7.0-mbstring \
+	&& apt-get install -y php7.0-fpm php7.0-sqlite php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-intl php7.0-gd php7.0-curl php7.0-xml php7.0-mbstring php7.0-xdebug \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN phpenmod sqlite pgsql mysql mcrypt intl gd curl xml mbstring
+RUN phpenmod sqlite pgsql mysql mcrypt intl gd curl xml mbstring xdebug
+
+# supply but disable xdebug; can be enabled by custom volume-mount ini file
+RUN phpdismod xdebug
+# RUN sed -i -e 's|^extension|;extension|g' /etc/php/7.0/mods-available/xdebug.ini
 
 RUN php -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
 	&& php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
