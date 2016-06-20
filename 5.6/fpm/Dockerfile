@@ -31,4 +31,4 @@ RUN php5.6 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.
 
 # Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> 5.6/fpm/Dockerfile
 COPY php-fpm.conf /etc/php/5.6/fpm/php-fpm.conf
-CMD ["php-fpm-5.6"]
+CMD ["php-fpm5.6"]

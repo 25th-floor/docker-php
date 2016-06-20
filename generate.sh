@@ -23,7 +23,7 @@ for version in "${versions[@]}"; do
 	ppa="php"
 	ppaPinName="LP-PPA-ondrej-php5"
 	package="php${version}-fpm"
-	binary="php-fpm-${version}"
+	binary="php-fpm${version}"
 	config="/etc/php/${version}/fpm/php-fpm.conf"
 	extensions="sqlite3 pgsql mysql mcrypt mbstring intl gd curl xml xsl xdebug"
 	extensionsDisable="xdebug"

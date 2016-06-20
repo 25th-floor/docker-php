@@ -31,4 +31,4 @@ RUN php7.0 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.
 
 # Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> 7.0/fpm/Dockerfile
 COPY php-fpm.conf /etc/php/7.0/fpm/php-fpm.conf
-CMD ["php-fpm-7.0"]
+CMD ["php-fpm7.0"]

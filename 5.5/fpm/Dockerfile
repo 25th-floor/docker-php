@@ -31,4 +31,4 @@ RUN php5.5 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.
 
 # Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> 5.5/fpm/Dockerfile
 COPY php-fpm.conf /etc/php/5.5/fpm/php-fpm.conf
-CMD ["php-fpm-5.5"]
+CMD ["php-fpm5.5"]
