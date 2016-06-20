@@ -13,23 +13,22 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update \
 	&& apt-get dist-upgrade -y \
 	&& apt-get install -y software-properties-common language-pack-en-base git \
-	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php5-5.6 \
+	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
 	&& apt-get update \
 	&& echo "Package: *\nPin: release o=LP-PPA-ondrej-php5\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \
-	&& apt-get install -y php5-fpm php5-sqlite php5-pgsql php5-mysqlnd php5-mcrypt php5-intl php5-gd php5-curl php5-xsl php5-xdebug \
+	&& apt-get install -y php5.6-fpm php5.6-sqlite3 php5.6-pgsql php5.6-mysql php5.6-mcrypt php5.6-mbstring php5.6-intl php5.6-gd php5.6-curl php5.6-xml php5.6-xsl php5.6-xdebug  \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN php5enmod sqlite pgsql mysqlnd mcrypt intl gd curl xsl xdebug
+RUN phpenmod -v 5.6 sqlite3 pgsql mysql mcrypt mbstring intl gd curl xml xsl xdebug
 
 # supply but disable xdebug; can be enabled by custom volume-mount ini file
-RUN php5dismod xdebug
-# RUN sed -i -e 's|^extension|;extension|g' /etc/php/5.6/mods-available/xdebug.ini
+RUN phpdismod -v 5.6 xdebug
 
-RUN php5 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
-	&& php5 composer-setup.php --install-dir=/usr/local/bin --filename=composer \
+RUN php5.6 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
+	&& php5.6 composer-setup.php --install-dir=/usr/local/bin --filename=composer \
 	&& rm composer-setup.php
 
 # Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> 5.6/fpm/Dockerfile
-COPY php-fpm.conf /etc/php5/fpm/php-fpm.conf
-CMD ["php5-fpm"]
+COPY php-fpm.conf /etc/php/5.6/fpm/php-fpm.conf
+CMD ["php-fpm-5.6"]
