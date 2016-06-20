@@ -16,11 +16,11 @@ RUN apt-get update \
 	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
 	&& apt-get update \
 	&& echo "Package: *\nPin: release o=LP-PPA-ondrej-php5\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \
-	&& apt-get install -y php5.6-fpm php5.6-sqlite3 php5.6-pgsql php5.6-mysql php5.6-mcrypt php5.6-mbstring php5.6-intl php5.6-gd php5.6-curl php5.6-xml php5.6-xsl php5.6-xdebug  \
+	&& apt-get install -y php5.6-fpm php5.6-sqlite3 php5.6-pgsql php5.6-mysql php5.6-mcrypt php5.6-mbstring php5.6-intl php5.6-gd php5.6-curl php5.6-xml php5.6-xsl php5.6-xdebug php5.6-zip  \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN phpenmod -v 5.6 sqlite3 pgsql mysql mcrypt mbstring intl gd curl xml xsl xdebug
+RUN phpenmod -v 5.6 sqlite3 pgsql mysql mcrypt mbstring intl gd curl xml xsl xdebug zip
 
 # supply but disable xdebug; can be enabled by custom volume-mount ini file
 RUN phpdismod -v 5.6 xdebug

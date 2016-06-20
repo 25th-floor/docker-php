@@ -25,7 +25,7 @@ for version in "${versions[@]}"; do
 	package="php${version}-fpm"
 	binary="php-fpm${version}"
 	config="/etc/php/${version}/fpm/php-fpm.conf"
-	extensions="sqlite3 pgsql mysql mcrypt mbstring intl gd curl xml xsl xdebug"
+	extensions="sqlite3 pgsql mysql mcrypt mbstring intl gd curl xml xsl xdebug zip"
 	extensionsDisable="xdebug"
 	extensionsPackages=""
 	cliBinary="php${version}"
