@@ -92,6 +92,7 @@ for version in "${versions[@]}"; do
 	directory="${version}/nginx"
 	file="${directory}/Dockerfile"
 	supervisor="${directory}/supervisord.conf"
+	binary="php-fpm${version}"
 
 	echo "Generating ${file}"
 
