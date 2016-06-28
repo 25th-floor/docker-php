@@ -29,8 +29,8 @@ for version in "${versions[@]}"; do
 	extensionsDisable="xdebug"
 	extensionsPackages=""
 	cliBinary="php${version}"
-	phpenmod="phpenmod -v ${version}"
-	phpdismod="phpdismod -v ${version}"
+	phpenmod="phpenmod -v ${version} -s ALL"
+	phpdismod="phpdismod -v ${version} -s ALL"
 
 	if [[ ${version} == "7.0" ]]; then
 		extensions+=""
@@ -59,7 +59,7 @@ for version in "${versions[@]}"; do
 			&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/${ppa} \\
 			&& apt-get update \\
 			&& echo "Package: *\nPin: release o=${ppaPinName}\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \\
-			&& apt-get install -y ${package} ${extensionsPackages} \\
+			&& apt-get install -y ${package} ${extensionsPackages} php-pear \\
 			&& apt-get clean \\
 			&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -68,9 +68,15 @@ for version in "${versions[@]}"; do
 		# supply but disable xdebug; can be enabled by custom volume-mount ini file
 		RUN ${phpdismod} ${extensionsDisable}
 
+		# install composer
 		RUN ${cliBinary} -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \\
 			&& ${cliBinary} composer-setup.php --install-dir=/usr/local/bin --filename=composer \\
 			&& rm composer-setup.php
+
+		# install phing
+		RUN export PHP_PEAR_PHP_BIN=${cliBinary} \\
+			&& pear channel-discover pear.phing.info \\
+			&& pear install phing/phing
 
 		# Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> ${file}
 		COPY php-fpm.conf ${config}

@@ -16,18 +16,24 @@ RUN apt-get update \
 	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
 	&& apt-get update \
 	&& echo "Package: *\nPin: release o=LP-PPA-ondrej-php5\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \
-	&& apt-get install -y php7.0-fpm php7.0-sqlite3 php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-mbstring php7.0-intl php7.0-gd php7.0-curl php7.0-xml php7.0-xsl php7.0-xdebug php7.0-zip  \
+	&& apt-get install -y php7.0-fpm php7.0-sqlite3 php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-mbstring php7.0-intl php7.0-gd php7.0-curl php7.0-xml php7.0-xsl php7.0-xdebug php7.0-zip  php-pear \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN phpenmod -v 7.0 sqlite3 pgsql mysql mcrypt mbstring intl gd curl xml xsl xdebug zip
+RUN phpenmod -v 7.0 -s ALL sqlite3 pgsql mysql mcrypt mbstring intl gd curl xml xsl xdebug zip
 
 # supply but disable xdebug; can be enabled by custom volume-mount ini file
-RUN phpdismod -v 7.0 xdebug
+RUN phpdismod -v 7.0 -s ALL xdebug
 
+# install composer
 RUN php7.0 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
 	&& php7.0 composer-setup.php --install-dir=/usr/local/bin --filename=composer \
 	&& rm composer-setup.php
+
+# install phing
+RUN export PHP_PEAR_PHP_BIN=php7.0 \
+	&& pear channel-discover pear.phing.info \
+	&& pear install phing/phing
 
 # Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> 7.0/fpm/Dockerfile
 COPY php-fpm.conf /etc/php/7.0/fpm/php-fpm.conf
