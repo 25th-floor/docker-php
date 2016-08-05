@@ -59,7 +59,8 @@ for version in "${versions[@]}"; do
 			&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/${ppa} \\
 			&& apt-get update \\
 			&& echo "Package: *\nPin: release o=${ppaPinName}\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \\
-			&& apt-get install -y ${package} ${extensionsPackages} php-pear \\
+			&& apt-get install -y ${package} ${extensionsPackages} \\
+			&& apt-get install -y php-pear \\
 			&& apt-get clean \\
 			&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

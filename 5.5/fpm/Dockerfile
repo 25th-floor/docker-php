@@ -16,7 +16,8 @@ RUN apt-get update \
 	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
 	&& apt-get update \
 	&& echo "Package: *\nPin: release o=LP-PPA-ondrej-php5\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \
-	&& apt-get install -y php5.5-fpm php5.5-sqlite3 php5.5-pgsql php5.5-mysql php5.5-mcrypt php5.5-mbstring php5.5-intl php5.5-gd php5.5-curl php5.5-xml php5.5-xsl php5.5-xdebug php5.5-zip  php-pear \
+	&& apt-get install -y php5.5-fpm php5.5-sqlite3 php5.5-pgsql php5.5-mysql php5.5-mcrypt php5.5-mbstring php5.5-intl php5.5-gd php5.5-curl php5.5-xml php5.5-xsl php5.5-xdebug php5.5-zip  \
+	&& apt-get install -y php-pear \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
