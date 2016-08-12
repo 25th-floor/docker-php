@@ -54,7 +54,6 @@ for version in "${versions[@]}"; do
 			&& dpkg-reconfigure -f noninteractive tzdata
 
 		RUN apt-get update \\
-			&& apt-get dist-upgrade -y \\
 			&& apt-get install -y software-properties-common language-pack-en-base git \\
 			&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/${ppa} \\
 			&& apt-get update \\
@@ -89,7 +88,7 @@ for version in "${versions[@]}"; do
 
 	cp php-fpm.conf ${directory}
 
-	docker build -f ${file} --tag "twentyfifth/php-fpm:${version}" ${directory}/
+	docker build --pull -f ${file} --tag "twentyfifth/php-fpm:${version}" ${directory}/
 done
 
 # Building php-nginx images
@@ -163,5 +162,5 @@ for version in "${versions[@]}"; do
 
 	cp nginx-site.conf ${directory}
 
-	docker build -f ${file} --tag "twentyfifth/php-nginx:${version}" ${directory}/
+	docker build --pull -f ${file} --tag "twentyfifth/php-nginx:${version}" ${directory}/
 done

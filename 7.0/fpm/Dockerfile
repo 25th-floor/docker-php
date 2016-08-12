@@ -11,7 +11,6 @@ ENV DEBIAN_FRONTEND noninteractive
 	&& dpkg-reconfigure -f noninteractive tzdata
 
 RUN apt-get update \
-	&& apt-get dist-upgrade -y \
 	&& apt-get install -y software-properties-common language-pack-en-base git \
 	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
 	&& apt-get update \
