@@ -136,7 +136,7 @@ for version in "${versions[@]}"; do
 		[supervisord]
 		nodaemon=true
 		loglevel=debug
-		logfile=/proc/self/fd/2
+		logfile=/proc/1/fd/1
 		logfile_maxbytes=0
 		
 		[program:php-fpm]
@@ -144,9 +144,9 @@ for version in "${versions[@]}"; do
 		autostart=true
 		autorestart=true
 		redirect_stderr=true
-		stdout_logfile=/proc/self/fd/2
+		stdout_logfile=/proc/1/fd/1
 		stdout_logfile_maxbytes=0
-		stderr_logfile=/proc/self/fd/2
+		stderr_logfile=/proc/1/fd/2
 		stderr_logfile_maxbytes=0
 
 		[program:nginx]
@@ -154,9 +154,9 @@ for version in "${versions[@]}"; do
 		autostart=true
 		autorestart=true
 		redirect_stderr=true
-		stdout_logfile=/proc/self/fd/2
+		stdout_logfile=/proc/1/fd/1
 		stdout_logfile_maxbytes=0
-		stderr_logfile=/proc/self/fd/2
+		stderr_logfile=/proc/1/fd/2
 		stderr_logfile_maxbytes=0
 	SUPERVISOR
 
