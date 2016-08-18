@@ -11,7 +11,7 @@ ENV DEBIAN_FRONTEND noninteractive
 	&& dpkg-reconfigure -f noninteractive tzdata
 
 RUN apt-get update \
-	&& apt-get install -y software-properties-common language-pack-en-base git \
+	&& apt-get install -y software-properties-common language-pack-en-base language-pack-de git \
 	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
 	&& apt-get update \
 	&& echo "Package: *\nPin: release o=LP-PPA-ondrej-php5\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \
