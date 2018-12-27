@@ -16,28 +16,26 @@ RUN apt-get update \
 	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
 	&& apt-get update \
 	&& echo "Package: *\nPin: release o=LP-PPA-ondrej-php5\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \
-	&& apt-get install -y php7.1-fpm php7.1-sqlite3 php7.1-pgsql php7.1-mysql php7.1-mbstring php7.1-intl php7.1-gd php7.1-curl php7.1-xml php7.1-xsl php7.1-xdebug php7.1-zip php7.1-mcrypt  \
+	&& apt-get install -y php7.3-fpm php7.3-sqlite3 php7.3-pgsql php7.3-mysql php7.3-mbstring php7.3-intl php7.3-gd php7.3-curl php7.3-xml php7.3-xsl php7.3-xdebug php7.3-zip  \
 	&& apt-get install -y php-pear \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN phpenmod -v 7.1 -s ALL sqlite3 pgsql mysql mbstring intl gd curl xml xsl xdebug zip mcrypt
+RUN phpenmod -v 7.3 -s ALL sqlite3 pgsql mysql mbstring intl gd curl xml xsl xdebug zip
 
 # supply but disable xdebug; can be enabled by custom volume-mount ini file
-RUN phpdismod -v 7.1 -s ALL xdebug
+RUN phpdismod -v 7.3 -s ALL xdebug
 
 # install composer
-RUN php7.1 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
-	&& php7.1 composer-setup.php --install-dir=/usr/local/bin --filename=composer \
+RUN php7.3 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
+	&& php7.3 composer-setup.php --install-dir=/usr/local/bin --filename=composer \
 	&& rm composer-setup.php
 
 ENV PATH="/home/mbandion/.nvm/versions/node/v10.12.0/bin:/home/mbandion/.local/bin:/home/mbandion/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/mbandion/.antigen/bundles/zsh-users/zsh-syntax-highlighting:/home/mbandion/.antigen/bundles/zsh-users/zsh-history-substring-search:/home/mbandion/.antigen/bundles/zsh-users/zsh-autosuggestions:/home/mbandion/.antigen/bundles/arzzen/calc.plugin.zsh:~/bin:~/Applications:/root/.composer/vendor/bin"
 
 # install phing
-RUN export PHP_PEAR_PHP_BIN=php7.1 \
-	&& pear channel-discover pear.phing.info \
-	&& pear install phing/phing
+RUN composer global require phing/phing
 
-# Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> 7.1/fpm/Dockerfile
-COPY php-fpm.conf /etc/php/7.1/fpm/php-fpm.conf
-CMD ["php-fpm7.1"]
+# Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> 7.3/fpm/Dockerfile
+COPY php-fpm.conf /etc/php/7.3/fpm/php-fpm.conf
+CMD ["php-fpm7.3"]
