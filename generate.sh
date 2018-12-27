@@ -25,7 +25,11 @@ for version in "${versions[@]}"; do
 	package="php${version}-fpm"
 	binary="php-fpm${version}"
 	config="/etc/php/${version}/fpm/php-fpm.conf"
-	extensions="sqlite3 pgsql mysql mcrypt mbstring intl gd curl xml xsl xdebug zip"
+	extensions="sqlite3 pgsql mysql mbstring intl gd curl xml xsl xdebug zip"
+	if [[ ${version} == "5.6" || ${version} == "7.0" || ${version} == "7.1" ]]; then
+		# mcrypt deprecated in 7.1 and removed in 7.2 (https://secure.php.net/manual/en/migration71.deprecated.php, https://secure.php.net/manual/en/migration72.other-changes.php)
+		extensions="${extensions} mcrypt"
+	fi
 	extensionsDisable="xdebug"
 	extensionsPackages=""
 	cliBinary="php${version}"
@@ -55,7 +59,7 @@ for version in "${versions[@]}"; do
 
 		RUN apt-get update \\
 			&& apt-get -y dist-upgrade \\
-			&& apt-get install -y software-properties-common language-pack-en-base language-pack-de git \\
+			&& apt-get install -y software-properties-common language-pack-en-base language-pack-de git unzip \\
 			&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/${ppa} \\
 			&& apt-get update \\
 			&& echo "Package: *\nPin: release o=${ppaPinName}\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \\
@@ -74,18 +78,34 @@ for version in "${versions[@]}"; do
 			&& ${cliBinary} composer-setup.php --install-dir=/usr/local/bin --filename=composer \\
 			&& rm composer-setup.php
 
+		ENV PATH="${PATH}:/root/.composer/vendor/bin"
+
+	DOCKERFILE
+
+	if [[ ${version} == "5.6" || ${version} == "7.0" || ${version} == "7.1" || ${version} == "7.2" ]]; then
+	cat <<- DOCKERFILE >> ${file}
 		# install phing
 		RUN export PHP_PEAR_PHP_BIN=${cliBinary} \\
 			&& pear channel-discover pear.phing.info \\
 			&& pear install phing/phing
 
+	DOCKERFILE
+	else
+	cat <<- DOCKERFILE >> ${file}
+		# install phing
+		RUN composer global require phing/phing
+
+	DOCKERFILE
+	fi
+
+	cat <<- DOCKERFILE >> ${file}
 		# Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> ${file}
 		COPY php-fpm.conf ${config}
 		CMD ["${binary}"]
 	DOCKERFILE
 
-        # do some code-styling for Dockerfile readability
-        sed -i '' -e "s|^&&|$(printf '\t')\&\&|g" ${file}
+	# do some code-styling for Dockerfile readability
+	sed -i -e "s|^&&|$(printf '\t')\&\&|g" "${file}"
 
 	cp php-fpm.conf ${directory}
 
@@ -125,13 +145,13 @@ for version in "${versions[@]}"; do
 			&& ln -sf /dev/stderr /var/log/nginx/error.log
 
 		COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-		COPY nginx-site.conf /etc/nginx/sites-enabled/default
+		COPY nginx-site.conf /etc/nginx/conf.d/default.conf
 
 		CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 	DOCKERFILE
 
 	# do some code-styling for Dockerfile readability
-	sed -i '' -e "s|^&&|$(printf '\t')\&\&|g" ${file}
+	sed -i -e "s|^&&|$(printf '\t')\&\&|g" ${file}
 
 	cat <<- SUPERVISOR > ${supervisor}
 		[supervisord]
