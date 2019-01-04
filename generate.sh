@@ -83,22 +83,6 @@ for version in "${versions[@]}"; do
 
 	DOCKERFILE
 
-	if [[ ${version} == "5.6" || ${version} == "7.0" || ${version} == "7.1" || ${version} == "7.2" ]]; then
-	cat <<- DOCKERFILE >> ${file}
-		# install phing
-		RUN export PHP_PEAR_PHP_BIN=${cliBinary} \\
-			&& pear channel-discover pear.phing.info \\
-			&& pear install phing/phing
-
-	DOCKERFILE
-	else
-	cat <<- DOCKERFILE >> ${file}
-		# install phing
-		RUN composer global require phing/phing
-
-	DOCKERFILE
-	fi
-
 	cat <<- DOCKERFILE >> ${file}
 		# Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> ${file}
 		COPY php-fpm.conf ${config}
