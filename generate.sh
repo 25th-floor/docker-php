@@ -78,7 +78,7 @@ for version in "${versions[@]}"; do
 			&& ${cliBinary} composer-setup.php --install-dir=/usr/local/bin --filename=composer \\
 			&& rm composer-setup.php
 
-		ENV PATH="${PATH}:/root/.composer/vendor/bin"
+		ENV PATH="\${PATH}:/root/.composer/vendor/bin"
 
 	DOCKERFILE
 
