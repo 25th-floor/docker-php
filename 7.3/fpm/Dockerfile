@@ -4,9 +4,9 @@ MAINTAINER 25th-floor GmbH <devops@25th-floor.com>
 EXPOSE 9000
 
 ENV DEBIAN_FRONTEND noninteractive
-                ENV TZ=Europe/Vienna
+ENV TZ=Europe/Vienna
 
-                RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
 	&& echo $TZ > /etc/timezone \
 	&& dpkg-reconfigure -f noninteractive tzdata
 
@@ -30,11 +30,9 @@ RUN phpdismod -v 7.3 -s ALL xdebug
 RUN php7.3 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
 	&& php7.3 composer-setup.php --install-dir=/usr/local/bin --filename=composer \
 	&& rm composer-setup.php
+RUN composer global require hirak/prestissimo
 
-ENV PATH="/home/mbandion/.nvm/versions/node/v10.12.0/bin:/home/mbandion/.local/bin:/home/mbandion/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/mbandion/.antigen/bundles/zsh-users/zsh-syntax-highlighting:/home/mbandion/.antigen/bundles/zsh-users/zsh-history-substring-search:/home/mbandion/.antigen/bundles/zsh-users/zsh-autosuggestions:/home/mbandion/.antigen/bundles/arzzen/calc.plugin.zsh:~/bin:~/Applications:/root/.composer/vendor/bin"
-
-# install phing
-RUN composer global require phing/phing
+ENV PATH="${PATH}:/root/.composer/vendor/bin"
 
 # Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> 7.3/fpm/Dockerfile
 COPY php-fpm.conf /etc/php/7.3/fpm/php-fpm.conf

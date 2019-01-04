@@ -4,37 +4,35 @@ MAINTAINER 25th-floor GmbH <devops@25th-floor.com>
 EXPOSE 9000
 
 ENV DEBIAN_FRONTEND noninteractive
-                ENV TZ=Europe/Vienna
+ENV TZ=Europe/Vienna
 
-                RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
-&& echo $TZ > /etc/timezone \
-&& dpkg-reconfigure -f noninteractive tzdata
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+	&& echo $TZ > /etc/timezone \
+	&& dpkg-reconfigure -f noninteractive tzdata
 
 RUN apt-get update \
-&& apt-get -y dist-upgrade \
-&& apt-get install -y software-properties-common language-pack-en-base language-pack-de git \
-&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
-&& apt-get update \
-&& echo "Package: *\nPin: release o=LP-PPA-ondrej-php5\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \
-&& apt-get install -y php7.2-fpm php7.2-sqlite3 php7.2-pgsql php7.2-mysql php7.2-mbstring php7.2-intl php7.2-gd php7.2-curl php7.2-xml php7.2-xsl php7.2-xdebug php7.2-zip  \
-&& apt-get install -y php-pear \
-&& apt-get clean \
-&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+	&& apt-get -y dist-upgrade \
+	&& apt-get install -y software-properties-common language-pack-en-base language-pack-de git unzip \
+	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
+	&& apt-get update \
+	&& echo "Package: *\nPin: release o=LP-PPA-ondrej-php5\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \
+	&& apt-get install -y php7.2-fpm php7.2-sqlite3 php7.2-pgsql php7.2-mysql php7.2-mbstring php7.2-intl php7.2-gd php7.2-curl php7.2-xml php7.2-xsl php7.2-xdebug php7.2-zip  \
+	&& apt-get install -y php-pear \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN phpenmod -v 7.2 -s ALL sqlite3 pgsql mysql mcrypt mbstring intl gd curl xml xsl xdebug zip
+RUN phpenmod -v 7.2 -s ALL sqlite3 pgsql mysql mbstring intl gd curl xml xsl xdebug zip
 
 # supply but disable xdebug; can be enabled by custom volume-mount ini file
 RUN phpdismod -v 7.2 -s ALL xdebug
 
 # install composer
 RUN php7.2 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
-&& php7.2 composer-setup.php --install-dir=/usr/local/bin --filename=composer \
-&& rm composer-setup.php
+	&& php7.2 composer-setup.php --install-dir=/usr/local/bin --filename=composer \
+	&& rm composer-setup.php
+RUN composer global require hirak/prestissimo
 
-# install phing
-RUN export PHP_PEAR_PHP_BIN=php7.2 \
-&& pear channel-discover pear.phing.info \
-&& pear install phing/phing
+ENV PATH="${PATH}:/root/.composer/vendor/bin"
 
 # Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> 7.2/fpm/Dockerfile
 COPY php-fpm.conf /etc/php/7.2/fpm/php-fpm.conf

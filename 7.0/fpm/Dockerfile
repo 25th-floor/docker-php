@@ -4,24 +4,24 @@ MAINTAINER 25th-floor GmbH <devops@25th-floor.com>
 EXPOSE 9000
 
 ENV DEBIAN_FRONTEND noninteractive
-                ENV TZ=Europe/Vienna
+ENV TZ=Europe/Vienna
 
-                RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
 	&& echo $TZ > /etc/timezone \
 	&& dpkg-reconfigure -f noninteractive tzdata
 
 RUN apt-get update \
 	&& apt-get -y dist-upgrade \
-	&& apt-get install -y software-properties-common language-pack-en-base language-pack-de git \
+	&& apt-get install -y software-properties-common language-pack-en-base language-pack-de git unzip \
 	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
 	&& apt-get update \
 	&& echo "Package: *\nPin: release o=LP-PPA-ondrej-php5\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \
-	&& apt-get install -y php7.0-fpm php7.0-sqlite3 php7.0-pgsql php7.0-mysql php7.0-mcrypt php7.0-mbstring php7.0-intl php7.0-gd php7.0-curl php7.0-xml php7.0-xsl php7.0-xdebug php7.0-zip  \
+	&& apt-get install -y php7.0-fpm php7.0-sqlite3 php7.0-pgsql php7.0-mysql php7.0-mbstring php7.0-intl php7.0-gd php7.0-curl php7.0-xml php7.0-xsl php7.0-xdebug php7.0-zip php7.0-mcrypt  \
 	&& apt-get install -y php-pear \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN phpenmod -v 7.0 -s ALL sqlite3 pgsql mysql mcrypt mbstring intl gd curl xml xsl xdebug zip
+RUN phpenmod -v 7.0 -s ALL sqlite3 pgsql mysql mbstring intl gd curl xml xsl xdebug zip mcrypt
 
 # supply but disable xdebug; can be enabled by custom volume-mount ini file
 RUN phpdismod -v 7.0 -s ALL xdebug
@@ -30,11 +30,9 @@ RUN phpdismod -v 7.0 -s ALL xdebug
 RUN php7.0 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
 	&& php7.0 composer-setup.php --install-dir=/usr/local/bin --filename=composer \
 	&& rm composer-setup.php
+RUN composer global require hirak/prestissimo
 
-# install phing
-RUN export PHP_PEAR_PHP_BIN=php7.0 \
-	&& pear channel-discover pear.phing.info \
-	&& pear install phing/phing
+ENV PATH="${PATH}:/root/.composer/vendor/bin"
 
 # Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> 7.0/fpm/Dockerfile
 COPY php-fpm.conf /etc/php/7.0/fpm/php-fpm.conf
