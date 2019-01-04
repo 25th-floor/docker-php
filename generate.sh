@@ -51,9 +51,9 @@ for version in "${versions[@]}"; do
 		EXPOSE 9000
 
 		ENV DEBIAN_FRONTEND noninteractive
-                ENV TZ=${TZ}
+		ENV TZ=${TZ}
 
-                RUN ln -snf /usr/share/zoneinfo/\$TZ /etc/localtime \\
+		RUN ln -snf /usr/share/zoneinfo/\$TZ /etc/localtime \\
 			&& echo \$TZ > /etc/timezone \\
 			&& dpkg-reconfigure -f noninteractive tzdata
 
