@@ -77,6 +77,7 @@ for version in "${versions[@]}"; do
 		RUN ${cliBinary} -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \\
 			&& ${cliBinary} composer-setup.php --install-dir=/usr/local/bin --filename=composer \\
 			&& rm composer-setup.php
+		RUN composer global require hirak/prestissimo
 
 		ENV PATH="\${PATH}:/root/.composer/vendor/bin"
 
