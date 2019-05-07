@@ -51,7 +51,7 @@ for version in "${versions[@]}"; do
 
 		RUN apt-get update \\
 			&& apt-get -y dist-upgrade \\
-			&& apt-get install -y software-properties-common language-pack-en-base language-pack-de git tzdata \\
+			&& apt-get install -y software-properties-common language-pack-en-base language-pack-de git tzdata netcat \\
 			&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/${ppa} \\
 			&& apt-get update \\
 			&& echo "Package: *\nPin: release o=${ppaPinName}\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \\

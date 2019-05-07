@@ -8,7 +8,7 @@ ENV TZ=Europe/Vienna
 
 RUN apt-get update \
 	&& apt-get -y dist-upgrade \
-	&& apt-get install -y software-properties-common language-pack-en-base language-pack-de git tzdata \
+	&& apt-get install -y software-properties-common language-pack-en-base language-pack-de git tzdata netcat \
 	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
 	&& apt-get update \
 	&& echo "Package: *\nPin: release o=LP-PPA-ondrej-php5\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \
