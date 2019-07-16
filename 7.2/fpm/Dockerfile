@@ -8,11 +8,11 @@ ENV TZ=Europe/Vienna
 
 RUN apt-get update \
 	&& apt-get -y dist-upgrade \
-	&& apt-get install -y software-properties-common language-pack-en-base language-pack-de git tzdata netcat \
+	&& apt-get install -y software-properties-common language-pack-en-base language-pack-de git unzip tzdata \
 	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
 	&& apt-get update \
 	&& echo "Package: *\nPin: release o=LP-PPA-ondrej-php5\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \
-	&& apt-get install -y php5.6-fpm php5.6-sqlite3 php5.6-pgsql php5.6-mysql php5.6-mbstring php5.6-intl php5.6-gd php5.6-curl php5.6-xml php5.6-xsl php5.6-xdebug php5.6-zip php5.6-mcrypt  \
+	&& apt-get install -y php7.2-fpm php7.2-sqlite3 php7.2-pgsql php7.2-mysql php7.2-mbstring php7.2-intl php7.2-gd php7.2-curl php7.2-xml php7.2-xsl php7.2-xdebug php7.2-zip  \
 	&& apt-get install -y php-pear \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
@@ -20,19 +20,19 @@ RUN apt-get update \
 	&& echo $TZ > /etc/timezone \
 	&& dpkg-reconfigure -f noninteractive tzdata
 
-RUN phpenmod -v 5.6 -s ALL sqlite3 pgsql mysql mbstring intl gd curl xml xsl xdebug zip mcrypt
+RUN phpenmod -v 7.2 -s ALL sqlite3 pgsql mysql mbstring intl gd curl xml xsl xdebug zip
 
 # supply but disable xdebug; can be enabled by custom volume-mount ini file
-RUN phpdismod -v 5.6 -s ALL xdebug
+RUN phpdismod -v 7.2 -s ALL xdebug
 
 # install composer
-RUN php5.6 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
-	&& php5.6 composer-setup.php --install-dir=/usr/local/bin --filename=composer \
+RUN php7.2 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
+	&& php7.2 composer-setup.php --install-dir=/usr/local/bin --filename=composer \
 	&& rm composer-setup.php
 RUN composer global require hirak/prestissimo
 
 ENV PATH="${PATH}:/root/.composer/vendor/bin"
 
-# Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> 5.6/fpm/Dockerfile
-COPY php-fpm.conf /etc/php/5.6/fpm/php-fpm.conf
-CMD ["php-fpm5.6"]
+# Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> 7.2/fpm/Dockerfile
+COPY php-fpm.conf /etc/php/7.2/fpm/php-fpm.conf
+CMD ["php-fpm7.2"]

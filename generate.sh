@@ -25,7 +25,11 @@ for version in "${versions[@]}"; do
 	package="php${version}-fpm"
 	binary="php-fpm${version}"
 	config="/etc/php/${version}/fpm/php-fpm.conf"
-	extensions="sqlite3 pgsql mysql mcrypt mbstring intl gd curl xml xsl xdebug zip"
+	extensions="sqlite3 pgsql mysql mbstring intl gd curl xml xsl xdebug zip"
+	if [[ ${version} == "5.6" || ${version} == "7.0" || ${version} == "7.1" ]]; then
+		# mcrypt deprecated in 7.1 and removed in 7.2 (https://secure.php.net/manual/en/migration71.deprecated.php, https://secure.php.net/manual/en/migration72.other-changes.php)
+		extensions="${extensions} mcrypt"
+	fi
 	extensionsDisable="xdebug"
 	extensionsPackages=""
 	cliBinary="php${version}"
@@ -72,12 +76,13 @@ for version in "${versions[@]}"; do
 		RUN ${cliBinary} -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \\
 			&& ${cliBinary} composer-setup.php --install-dir=/usr/local/bin --filename=composer \\
 			&& rm composer-setup.php
+		RUN composer global require hirak/prestissimo
 
-		# install phing
-		RUN export PHP_PEAR_PHP_BIN=${cliBinary} \\
-			&& pear channel-discover pear.phing.info \\
-			&& pear install phing/phing
+		ENV PATH="\${PATH}:/root/.composer/vendor/bin"
 
+	DOCKERFILE
+
+	cat <<- DOCKERFILE >> ${file}
 		# Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> ${file}
 		COPY php-fpm.conf ${config}
 		CMD ["${binary}"]
@@ -124,13 +129,13 @@ for version in "${versions[@]}"; do
 			&& ln -sf /dev/stderr /var/log/nginx/error.log
 
 		COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-		COPY nginx-site.conf /etc/nginx/sites-enabled/default
+		COPY nginx-site.conf /etc/nginx/conf.d/default.conf
 
 		CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 	DOCKERFILE
 
 	# do some code-styling for Dockerfile readability
-	sed -i '' -e "s|^&&|$(printf '\t')\&\&|g" ${file}
+	sed -i -e "s|^&&|$(printf '\t')\&\&|g" ${file}
 
 	cat <<- SUPERVISOR > ${supervisor}
 		[supervisord]

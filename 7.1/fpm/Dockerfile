@@ -12,7 +12,7 @@ RUN apt-get update \
 	&& LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php \
 	&& apt-get update \
 	&& echo "Package: *\nPin: release o=LP-PPA-ondrej-php5\nPin-Priority: 1001" > /etc/apt/preferences.d/ondrej \
-	&& apt-get install -y php7.1-fpm php7.1-sqlite3 php7.1-pgsql php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-intl php7.1-gd php7.1-curl php7.1-xml php7.1-xsl php7.1-xdebug php7.1-zip  \
+	&& apt-get install -y php7.1-fpm php7.1-sqlite3 php7.1-pgsql php7.1-mysql php7.1-mbstring php7.1-intl php7.1-gd php7.1-curl php7.1-xml php7.1-xsl php7.1-xdebug php7.1-zip php7.1-mcrypt  \
 	&& apt-get install -y php-pear \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
@@ -20,7 +20,7 @@ RUN apt-get update \
 	&& echo $TZ > /etc/timezone \
 	&& dpkg-reconfigure -f noninteractive tzdata
 
-RUN phpenmod -v 7.1 -s ALL sqlite3 pgsql mysql mcrypt mbstring intl gd curl xml xsl xdebug zip
+RUN phpenmod -v 7.1 -s ALL sqlite3 pgsql mysql mbstring intl gd curl xml xsl xdebug zip mcrypt
 
 # supply but disable xdebug; can be enabled by custom volume-mount ini file
 RUN phpdismod -v 7.1 -s ALL xdebug
@@ -29,11 +29,9 @@ RUN phpdismod -v 7.1 -s ALL xdebug
 RUN php7.1 -r 'readfile("https://getcomposer.org/installer");' > composer-setup.php \
 	&& php7.1 composer-setup.php --install-dir=/usr/local/bin --filename=composer \
 	&& rm composer-setup.php
+RUN composer global require hirak/prestissimo
 
-# install phing
-RUN export PHP_PEAR_PHP_BIN=php7.1 \
-	&& pear channel-discover pear.phing.info \
-	&& pear install phing/phing
+ENV PATH="${PATH}:/root/.composer/vendor/bin"
 
 # Prepare run directory\nRUN mkdir /run/php\n\nWORKDIR /var/www\n\n" >> 7.1/fpm/Dockerfile
 COPY php-fpm.conf /etc/php/7.1/fpm/php-fpm.conf
