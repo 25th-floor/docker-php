@@ -20,6 +20,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY nginx-site.conf /etc/nginx/conf.d/zzz-fpm.conf
+COPY nginx-site.conf /etc/nginx/conf.d/default.conf
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
